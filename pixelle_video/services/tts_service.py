@@ -11,13 +11,19 @@
 # limitations under the License.
 
 """
-TTS (Text-to-Speech) Service - Supports both local and ComfyUI inference
+TTS (Text-to-Speech) Service - Supports multiple engines and ComfyUI workflows
+
+Engines:
+- edge_tts: Microsoft Edge TTS (free, fast, good quality)
+- doubao_tts: ByteDance Doubao TTS (Chinese optimized)
+- azure_tts: Azure Cognitive Services (enterprise-grade)
+- index_tts: IndexTTS (voice cloning)
 """
 
 import os
 import uuid
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 from comfykit import ComfyKit
 from loguru import logger
@@ -25,23 +31,39 @@ from loguru import logger
 from pixelle_video.services.comfy_base_service import ComfyBaseService
 from pixelle_video.utils.tts_util import edge_tts
 from pixelle_video.tts_voices import speed_to_rate
+from pixelle_video.services.tts_engines import (
+    create_tts_engine,
+    get_available_engines,
+    TTSResult,
+)
 
 
 class TTSService(ComfyBaseService):
     """
-    TTS (Text-to-Speech) service - Workflow-based
+    TTS (Text-to-Speech) service - Multi-engine + Workflow-based
     
-    Uses ComfyKit to execute TTS workflows.
+    Supports:
+    1. Local engines: edge_tts, doubao_tts, azure_tts, index_tts
+    2. ComfyUI workflows (via ComfyKit)
     
     Usage:
-        # Use default workflow
+        # Use local engine (edge_tts by default)
         audio_path = await pixelle_video.tts(text="Hello, world!")
         
-        # Use specific workflow
+        # Use specific engine
+        audio_path = await pixelle_video.tts(
+            text="Hello!",
+            engine="doubao_tts"
+        )
+        
+        # Use ComfyUI workflow
         audio_path = await pixelle_video.tts(
             text="你好，世界！",
             workflow="tts_edge.json"
         )
+        
+        # List available engines
+        engines = pixelle_video.tts.list_engines()
         
         # List available workflows
         workflows = pixelle_video.tts.list_workflows()
@@ -60,18 +82,25 @@ class TTSService(ComfyBaseService):
             core: PixelleVideoCore instance (for accessing shared ComfyKit)
         """
         super().__init__(config, service_name="tts", core=core)
+        
+        # Engine configurations
+        self.engine_configs = config.get("tts_engines", {})
     
     
     async def __call__(
         self,
         text: str,
         workflow: Optional[str] = None,
+        # Engine selection
+        engine: Optional[str] = None,
         # ComfyUI connection (optional overrides)
         comfyui_url: Optional[str] = None,
         runninghub_api_key: Optional[str] = None,
         # TTS parameters
         voice: Optional[str] = None,
         speed: Optional[float] = None,
+        pitch: Optional[float] = None,
+        ref_audio: Optional[str] = None,
         # Inference mode override
         inference_mode: Optional[str] = None,
         # Output path
@@ -79,15 +108,18 @@ class TTSService(ComfyBaseService):
         **params
     ) -> str:
         """
-        Generate speech using local Edge TTS or ComfyUI workflow
+        Generate speech using local engine or ComfyUI workflow
         
         Args:
             text: Text to convert to speech
             workflow: Workflow filename (for ComfyUI mode, default: from config)
+            engine: TTS engine name ("edge_tts", "doubao_tts", "azure_tts", "index_tts")
             comfyui_url: ComfyUI URL (optional, overrides config)
             runninghub_api_key: RunningHub API key (optional, overrides config)
-            voice: Voice ID (for local mode: Edge TTS voice ID; for ComfyUI: workflow-specific)
+            voice: Voice ID (engine-specific)
             speed: Speech speed multiplier (1.0 = normal, >1.0 = faster, <1.0 = slower)
+            pitch: Pitch multiplier (1.0 = normal)
+            ref_audio: Reference audio path for voice cloning (IndexTTS)
             inference_mode: Override inference mode ("local" or "comfyui", default: from config)
             output_path: Custom output path (auto-generated if None)
             **params: Additional workflow parameters
@@ -96,15 +128,28 @@ class TTSService(ComfyBaseService):
             Generated audio file path
         
         Examples:
-            # Local inference (Edge TTS)
+            # Edge TTS (default)
             audio_path = await pixelle_video.tts(
                 text="Hello, world!",
-                inference_mode="local",
-                voice="zh-CN-YunjianNeural",
+                voice="vi-VN-HoaiMyNeural",
                 speed=1.2
             )
             
-            # ComfyUI inference
+            # Doubao TTS
+            audio_path = await pixelle_video.tts(
+                text="你好，世界！",
+                engine="doubao_tts",
+                voice="zh_female_shuangkuaisisi_moon_bigtts"
+            )
+            
+            # IndexTTS (voice cloning)
+            audio_path = await pixelle_video.tts(
+                text="This is cloned voice",
+                engine="index_tts",
+                ref_audio="path/to/reference.wav"
+            )
+            
+            # ComfyUI workflow
             audio_path = await pixelle_video.tts(
                 text="你好，世界！",
                 inference_mode="comfyui",
@@ -116,10 +161,14 @@ class TTSService(ComfyBaseService):
         
         # Route to appropriate implementation
         if mode == "local":
-            return await self._call_local_tts(
+            # Use multi-engine TTS
+            return await self._call_engine_tts(
                 text=text,
+                engine=engine,
                 voice=voice,
                 speed=speed,
+                pitch=pitch,
+                ref_audio=ref_audio,
                 output_path=output_path
             )
         else:  # comfyui
@@ -138,60 +187,85 @@ class TTSService(ComfyBaseService):
                 **params
             )
     
-    async def _call_local_tts(
+    def list_engines(self) -> List[dict]:
+        """
+        List available TTS engines
+        
+        Returns:
+            List of engine info dicts
+        """
+        return get_available_engines()
+    
+    async def _call_engine_tts(
         self,
         text: str,
+        engine: Optional[str] = None,
         voice: Optional[str] = None,
         speed: Optional[float] = None,
+        pitch: Optional[float] = None,
+        ref_audio: Optional[str] = None,
         output_path: Optional[str] = None,
     ) -> str:
         """
-        Generate speech using local Edge TTS
+        Generate speech using multi-engine TTS
         
         Args:
             text: Text to convert to speech
-            voice: Edge TTS voice ID (default: from config)
+            engine: TTS engine name (default: from config)
+            voice: Voice ID (engine-specific)
             speed: Speech speed multiplier (default: from config)
-            output_path: Custom output path (auto-generated if None)
+            pitch: Pitch multiplier (default: from config)
+            ref_audio: Reference audio path for voice cloning
+            output_path: Custom output path
         
         Returns:
             Generated audio file path
         """
-        # Get config defaults
+        # Determine engine (param > config > default)
+        engine_name = engine or self.config.get("default_engine", "edge_tts")
+        
+        # Get engine config
+        engine_config = self.engine_configs.get(engine_name, {})
+        
+        # Create engine instance
+        try:
+            tts_engine = create_tts_engine(engine_name, engine_config)
+        except Exception as e:
+            logger.error(f"Failed to create TTS engine {engine_name}: {e}")
+            # Fallback to edge_tts
+            tts_engine = create_tts_engine("edge_tts", {})
+            engine_name = "edge_tts"
+        
+        # Get defaults from config
         local_config = self.config.get("local", {})
+        final_voice = voice or local_config.get("voice", "vi-VN-HoaiMyNeural")
+        final_speed = speed if speed is not None else local_config.get("speed", 1.0)
+        final_pitch = pitch if pitch is not None else local_config.get("pitch", 1.0)
         
-        # Determine voice and speed (param > config)
-        final_voice = voice or local_config.get("voice", "zh-CN-YunjianNeural")
-        final_speed = speed if speed is not None else local_config.get("speed", 1.2)
-        
-        # Convert speed to rate parameter
-        rate = speed_to_rate(final_speed)
-        
-        logger.info(f"🎙️  Using local Edge TTS: voice={final_voice}, speed={final_speed}x (rate={rate})")
+        logger.info(f"🎙️  Using {engine_name}: voice={final_voice}, speed={final_speed}x")
         
         # Generate output path if not provided
         if not output_path:
-            # Generate unique filename
             unique_id = uuid.uuid4().hex
-            output_path = f"output/{unique_id}.mp3"
-            
-            # Ensure output directory exists
-            Path("output").mkdir(parents=True, exist_ok=True)
+            ext = "wav" if engine_name == "index_tts" else "mp3"
+            output_path = f"output/tts/{unique_id}.{ext}"
         
-        # Call Edge TTS
+        # Synthesize
         try:
-            audio_bytes = await edge_tts(
+            result: TTSResult = await tts_engine.synthesize(
                 text=text,
                 voice=final_voice,
-                rate=rate,
-                output_path=output_path
+                speed=final_speed,
+                pitch=final_pitch,
+                output_path=output_path,
+                ref_audio=ref_audio
             )
             
-            logger.info(f"✅ Generated audio (local Edge TTS): {output_path}")
-            return output_path
-        
+            logger.info(f"✅ Generated audio ({engine_name}): {result.audio_path}")
+            return result.audio_path
+            
         except Exception as e:
-            logger.error(f"Local TTS generation error: {e}")
+            logger.error(f"TTS generation error ({engine_name}): {e}")
             raise
     
     async def _call_comfyui_workflow(
