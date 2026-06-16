@@ -1,246 +1,399 @@
-<h1 align="center">🎬 Pixelle-Video —— Công cụ tạo video ngắn AI hoàn toàn tự động</h1>
+<h1 align="center">🎬 Pixelle-Video — Engine Tạo Video AI</h1>
 
-<p align="center"><a href="README_EN.md">English</a> | <a href="README.md">中文</a> | <b>Tiếng Việt</b></p>
+<p align="center"><a href="README.md">English</a> | <b>Tiếng Việt</b> | <a href="README_CN.md">中文</a></p>
 
-<p align="center">
-  <a href="https://github.com/AIDC-AI/Pixelle-Video/releases" target="_blank"><img src="https://img.shields.io/badge/📦 Gói Windows-50C878" alt="Gói Windows"></a>
-  <a href="https://aidc-ai.github.io/Pixelle-Video/zh" target="_blank"><img src="https://img.shields.io/badge/📘 Tài liệu sử dụng-4A90E2" alt="Tài liệu"></a>
-  <a href="https://github.com/AIDC-AI/Pixelle-Video/stargazers"><img src="https://img.shields.io/github/stars/AIDC-AI/Pixelle-Video.svg" alt="Stargazers"></a>
-  <a href="https://github.com/AIDC-AI/Pixelle-Video/issues"><img src="https://img.shields.io/github/issues/AIDC-AI/Pixelle-Video.svg" alt="Issues"></a>
-  <a href="https://github.com/AIDC-AI/Pixelle-Video/network/members"><img src="https://img.shields.io/github/forks/AIDC-AI/Pixelle-Video.svg" alt="Forks"></a>
-  <a href="https://github.com/AIDC-AI/Pixelle-Video/blob/main/LICENSE"><img src="https://img.shields.io/github/license/AIDC-AI/Pixelle-Video.svg" alt="License"></a>
-</p>
+<p align="center">Tự động tạo video ngắn - Nhập chủ đề, tự động viết kịch bản, tạo ảnh AI, lồng tiếng, thêm nhạc nền.</p>
 
-Chỉ cần nhập một **chủ đề**, Pixelle-Video sẽ tự động hoàn thành:
-- ✍️ Viết lời bình video  
-- 🎨 Tạo hình ảnh/video AI  
-- 🗣️ Tổng hợp giọng đọc  
-- 🎵 Thêm nhạc nền  
-- 🎬 Tự động ghép video  
+---
 
-**Không cần kinh nghiệm**, biến việc tạo video thành một câu nói!
+## 📋 Mục lục
 
-## Xem trước giao diện Web
+- [Tính năng](#tính-năng)
+- [Bắt đầu nhanh](#bắt-đầu-nhanh)
+- [Cài đặt](#cài-đặt)
+- [Cấu hình](#cấu-hình)
+- [Sử dụng](#sử-dụng)
+- [Tham chiếu API](#tham-chiếu-api)
+- [TTS Engines](#tts-engines)
+- [Triển khai Docker](#triển-khai-docker)
+- [Tích hợp CreatorHub](#tích-hợp-creatorhub)
+- [Khắc phục sự cố](#khắc-phục-sự-cố)
 
-![Giao diện Web UI](resources/webui.png)
+---
 
-## Cập nhật gần đây
+## ✨ Tính năng
 
-- ✅ **2026-06-01**: Thêm cấu hình mô hình API trực tiếp, hỗ trợ cấu hình nhà cung cấp hình ảnh/video, Base URL và proxy trong WebUI
-- ✅ **2026-01-26**: Thêm mô hình "Chuyển động", tải lên video và hình ảnh tham chiếu để chuyển động
-- ✅ **2026-01-14**: Thêm pipeline "Avatar kỹ thuật số" và "Hình ảnh sang video", hỗ trợ giọng đọc đa ngôn ngữ
-- ✅ **2026-01-06**: Thêm hỗ trợ máy 48GB VRAM RunningHub
-- ✅ **2025-12-28**: Hỗ trợ giới hạn đồng thời RunningHub có thể cấu hình, tối ưu logic dữ liệu có cấu trúc LLM
-- ✅ **2025-12-17**: Hỗ trợ cấu hình API Key ComfyUI, hỗ trợ gọi mô hình Nano Banana, API hỗ trợ tham số template tùy chỉnh
+- ✍️ **Tự động viết kịch bản**: Tạo kịch bản video từ chủ đề
+- 🎨 **Ảnh AI**: Tạo ảnh bằng ComfyUI/RunningHub
+- 🗣️ **Multi-TTS**: Hỗ trợ Edge TTS, Doubao, Azure, IndexTTS
+- 🎵 **Nhạc nền**: Thêm BGM vào video
+- 🎬 **Tự động ghép**:合成 video một click
+- 🌐 **Web UI**: Giao diện Streamlit
+- 🔌 **API**: RESTful API để tích hợp
+- 🌍 **Đa ngôn ngữ**: Tiếng Việt, Anh, Trung
 
-## Tính năng nổi bật
+---
 
-- ✅ **Tự động hoàn toàn** - Nhập chủ đề, tự động tạo video đầy đủ
-- ✅ **Văn bản AI thông minh** - Tự động sáng tạo lời bình theo chủ đề
-- ✅ **Hình ảnh AI** - Mỗi câu đều có minh họa AI đẹp mắt
-- ✅ **Video AI** - Hỗ trợ sử dụng mô hình tạo video AI (như WAN 2.1)
-- ✅ **API mô hình trực tiếp** - Gọi trực tiếp DashScope, OpenAI, Seedream, Seedance, Kling
-- ✅ **Giọng đọc AI** - Hỗ trợ Edge-TTS, Index-TTS và nhiều giải pháp TTS khác
-- ✅ **Nhạc nền** - Hỗ trợ thêm BGM
-- ✅ **Phong cách hình ảnh** - Nhiều template có sẵn
-- ✅ **Kích thước linh hoạt** - Hỗ trợ dọc, ngang và nhiều kích thước video
-- ✅ **Nhiều mô hình AI** - Hỗ trợ GPT, Tongyi Qianwen, DeepSeek, Ollama
-- ✅ **Khả năng nguyên tử kết hợp linh hoạt** - Hỗ trợ ComfyUI / RunningHub workflow, hoặc API trực tiếp
+## 🚀 Bắt đầu nhanh
 
-## Quy trình tạo video
-
-![Sơ đồ quy trình](resources/flow.png)
-
-Từ văn bản đầu vào đến video đầu ra: **Tạo lời bình → Lên kế hoạch hình ảnh → Xử lý từng frame → Ghép video**
-
-Mỗi bước đều hỗ trợ tùy chỉnh linh hoạt, có thể chọn mô hình AI, engine âm thanh, phong cách hình ảnh khác nhau.
-
-## Bắt đầu nhanh
-
-### Gói Windows một cú nhấp (khuyến nghị cho người dùng Windows)
-
-**Không cần cài đặt Python, uv hoặc ffmpeg, sử dụng ngay!**
-
-👉 **[Tải gói Windows một cú nhấp](https://github.com/AIDC-AI/Pixelle-Video/releases/latest)**
-
-1. Tải gói Windows mới nhất và giải nén
-2. Nhấp đúp `start.bat` để khởi động giao diện Web
-3. Trình duyệt tự mở http://localhost:8501
-4. Cấu hình LLM API và dịch vụ tạo hình ảnh trong "⚙️ Cài đặt hệ thống"
-5. Bắt đầu tạo video!
-
-### Cài từ mã nguồn (dành cho macOS / Linux hoặc cần tùy chỉnh)
-
-#### Yêu cầu môi trường
-
-Trước khi bắt đầu, cần cài đặt trình quản lý gói Python `uv` và công cụ xử lý video `ffmpeg`:
-
-##### Cài uv
-
-Truy cập tài liệu chính thức uv để xem cách cài phù hợp với hệ thống của bạn:  
-👉 **[Hướng dẫn cài uv](https://docs.astral.sh/uv/getting-started/installation/)**
-
-##### Cài ffmpeg
-
-**macOS**
-```bash
-brew install ffmpeg
-```
-
-**Ubuntu / Debian**
-```bash
-sudo apt update
-sudo apt install ffmpeg
-```
-
-**Windows**
-- Tải: https://ffmpeg.org/download.html
-- Giải nén, thêm thư mục `bin` vào biến môi trường PATH
-
-#### Bước 1: Tải dự án
+### Cách 1: Docker (Khuyến nghị)
 
 ```bash
-git clone https://github.com/AIDC-AI/Pixelle-Video.git
-cd Pixelle-Video
+# Clone
+git clone https://github.com/tinnt-truman/pixelle-video.git
+cd pixelle-video
+
+# Cấu hình
+cp config.example.yaml config.yaml
+nano config.yaml
+
+# Chạy
+docker-compose up -d
+
+# Truy cập
+open http://localhost:8511
 ```
 
-#### Bước 2: Khởi động giao diện Web
+### Cách 2: Cài đặt Local
 
 ```bash
-# Sử dụng uv (khuyến nghị, tự động cài phụ thuộc)
-uv run streamlit run web/app.py
+# Clone
+git clone https://github.com/tinnt-truman/pixelle-video.git
+cd pixelle-video
+
+# Python 3.10+
+python -m venv .venv
+source .venv/bin/activate
+
+# Cài dependencies
+pip install -r requirements.txt
+
+# Cấu hình
+cp config.example.yaml config.yaml
+
+# Chạy API
+python api/app.py
+
+# Chạy Web UI
+streamlit run web/app.py
 ```
 
-Trình duyệt tự mở http://localhost:8501
+---
 
-#### Bước 3: Cấu hình trong Web
+## 📦 Cài đặt
 
-Lần đầu sử dụng, mở panel "⚙️ Cài đặt hệ thống":
-- **Cấu hình LLM**: Chọn mô hình AI (như Tongyi Qianwen, GPT) và nhập API Key
-- **Cấu hình ComfyUI / RunningHub**: Nếu cần sử dụng workflow tạo hình ảnh, video hoặc giọng đọc
-- **Cấu hình mô hình API**: Nếu cần gọi trực tiếp mô hình hình ảnh/video
+### Yêu cầu
 
-Nhấp "Lưu cấu hình" sau khi hoàn tất.
+- Python 3.10+
+- Node.js 18+ (một số tính năng)
+- FFmpeg
+- ComfyUI (local hoặc RunningHub)
 
-## Hướng dẫn sử dụng
+### Bước 1: Clone & Setup
 
-### ⚙️ Cài đặt hệ thống (bắt buộc lần đầu)
+```bash
+git clone https://github.com/tinnt-truman/pixelle-video.git
+cd pixelle-video
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate   # Windows
+```
 
-#### 1. Cấu hình LLM (Mô hình ngôn ngữ lớn)
-AI dùng để tạo lời bình video.
+### Bước 2: Cài Dependencies
 
-**Chọn nhanh theo preset**  
-- Chọn mô hình từ danh sách thả xuống (Tongyi Qianwen, GPT-4o, DeepSeek...)
-- Tự động điền base_url và model
+```bash
+pip install -r requirements.txt
+```
 
-**Cấu hình thủ công**  
-- API Key: Nhập khóa
-- Base URL: Địa chỉ API
-- Model: Tên mô hình
+### Bước 3: Cấu hình
 
-#### 2. Cấu hình ComfyUI / RunningHub
-Dùng để tạo hình ảnh, video hoặc giọng đọc qua ComfyUI workflow.
+```bash
+cp config.example.yaml config.yaml
+```
 
-**Triển khai cục bộ (khuyến nghị)**  
-- ComfyUI URL: Địa chỉ dịch vụ ComfyUI cục bộ (mặc định http://127.0.0.1:8188)
+Chỉnh sửa `config.yaml`:
 
-**Triển khai đám mây**  
-- RunningHub API Key: Khóa dịch vụ tạo hình ảnh đám mây
+```yaml
+# Cấu hình ComfyUI
+comfyui:
+  host: "127.0.0.1"
+  port: 8188
+  api_key: ""  # Tùy chọn
 
-#### 3. Cấu hình mô hình API trực tiếp
-Gọi trực tiếp nhà cung cấp mô hình hình ảnh, video hoặc phân tích tài nguyên mà không cần ComfyUI/RunningHub.
+# RunningHub (Cloud ComfyUI)
+runninghub:
+  enabled: false
+  api_key: ""
+  host: "https://www.runninghub.cn"
 
-**Nhà cung cấp được hỗ trợ**
-- OpenAI / GPT Image
-- DashScope / Wan / HappyHorse
-- Volcengine ARK / Seedream / Seedance
-- Kling AI
+# Cấu hình TTS
+tts:
+  engine: "edge"  # edge, doubao, azure, index
+  edge:
+    voice: "vi-VN-HoaiMyNeural"
+  doubao:
+    app_id: ""
+    access_token: ""
 
-### 📝 Nhập nội dung (cột trái)
+# Cấu hình LLM
+llm:
+  provider: "openai"
+  api_key: ""
+  model: "gpt-4"
+```
 
-#### Chế độ tạo
-- **AI tạo nội dung**: Nhập chủ đề, AI tự sáng tạo lời bình
-- **Văn bản cố định**: Nhập lời bình sẵn, bỏ qua bước AI sáng tạo
+### Bước 4: Chạy
 
-#### Nhạc nền (BGM)
-- **Không BGM**: Chỉ giọng đọc
-- **Nhạc có sẵn**: Chọn nhạc nền đặt sẵn
-- **Tải lên tùy chỉnh**: Đặt file nhạc (MP3/WAV) vào thư mục `bgm/`
+```bash
+# API server
+python api/app.py --host 0.0.0.0 --port 8010
 
-### 🎤 Cài đặt giọng nói (cột giữa)
+# Web UI
+streamlit run web/app.py --server.port 8011
+```
 
-#### Workflow TTS
-- Chọn workflow TTS từ danh sách thả xuống (hỗ trợ Edge-TTS, Index-TTS...)
+---
 
-#### Âm thanh tham chiếu (tùy chọn)
-- Tải lên file âm thanh tham chiếu để sao chép giọng nói
+## ⚙️ Cấu hình
 
-### 🎨 Cài đặt hình ảnh (cột giữa)
+### File Cấu hình: `config.yaml`
 
-#### Tạo hình ảnh
-**ComfyUI Workflow**  
-- Chọn workflow tạo hình ảnh từ danh sách thả xuống
-- Hỗ trợ triển khai cục bộ (selfhost) và đám mây (RunningHub)
+```yaml
+# Server
+server:
+  host: "0.0.0.0"
+  port: 8010
 
-**Kích thước hình ảnh**  
-- Đặt chiều rộng và chiều cao (đơn vị: pixel)
-- Mặc định 1024x1024
+# ComfyUI
+comfyui:
+  host: "127.0.0.1"
+  port: 8188
+  api_key: ""
 
-**Tiền tố Prompt**  
-- Kiểm soát phong cách hình ảnh tổng thể (bằng tiếng Anh)
+# RunningHub (Cloud)
+runninghub:
+  enabled: false
+  api_key: ""
 
-#### Template video
-- `static_*.html`: Template tĩnh (không cần media AI)
-- `image_*.html`: Template hình ảnh (sử dụng ảnh AI làm nền)
-- `video_*.html`: Template video (sử dụng video AI làm nền)
+# TTS
+tts:
+  engine: "edge"
+  # Cấu hình cho từng engine...
 
-### 🎬 Tạo video (cột phải)
+# LLM
+llm:
+  provider: "openai"
+  api_key: ""
+  model: "gpt-4"
 
-#### Nút tạo
-- Nhấp "🎬 Tạo video" sau khi cấu hình xong
-- Hiển thị tiến trình thời gian thực
-- Tự động hiển thị video xem trước sau khi hoàn tất
+# Tạo ảnh
+image:
+  provider: "comfyui"  # comfyui, runninghub
+  
+# Video
+video:
+  fps: 30
+  resolution: "1920x1080"
+```
 
-## Câu hỏi thường gặp
+### Biến Environment
 
-**Q: Lần đầu sử dụng mất bao lâu?**  
-A: Thời gian tạo phụ thuộc số lượng frame, tốc độ mạng và tốc độ suy luận AI, thường vài phút.
+| Biến | Mô tả |
+|------|-------|
+| `COMFYUI_HOST` | Host ComfyUI |
+| `COMFYUI_PORT` | Cổng ComfyUI |
+| `OPENAI_API_KEY` | API key OpenAI |
+| `DATABASE_URL` | Chuỗi kết nối PostgreSQL |
+| `REDIS_URL` | Chuỗi kết nối Redis |
 
-**Q: Không hài lòng với kết quả?**  
-A: Có thể thử:
-1. Đổi mô hình LLM
-2. Điều chỉnh kích thước hình ảnh và tiền tố prompt
-3. Đổi workflow TTS hoặc tải lên âm thanh tham chiếu
-4. Thử template và kích thước video khác
+---
 
-**Q: Chi phí khoảng bao nhiêu?**  
-A: **Dự án hỗ trợ chạy miễn phí hoàn toàn!**
+## 📖 Sử dụng
 
-- **Phương án miễn phí**: LLM dùng Ollama (chạy cục bộ) + ComfyUI cục bộ = 0 đồng
-- **Phương án khuyến nghị**: LLM dùng Tongyi Qianwen (chi phí thấp) + ComfyUI cục bộ
-- **Phương án đám mây**: LLM dùng OpenAI + hình ảnh dùng RunningHub
+### Tạo Video từ Chủ đề
 
-## Tài liệu tham khảo
+```python
+from pixelle_video import VideoGenerator
 
-- [Tài liệu sử dụng](https://aidc-ai.github.io/Pixelle-Video/zh) — Hướng dẫn chi tiết cách sử dụng
-- [README tiếng Việt](README.vi.md) ← bạn đang đọc
-- [README tiếng Anh](README_EN.md)
-- [README tiếng Trung](README.md)
+generator = VideoGenerator()
 
-## Dự án tham khảo
+# Tạo video từ chủ đề
+result = generator.generate(
+    topic="Giới thiệu về AI",
+    language="vi"
+)
 
-- [Pixelle-MCP](https://github.com/AIDC-AI/Pixelle-MCP) - Máy chủ ComfyUI MCP
-- [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo) - Công cụ tạo video
-- [NarratoAI](https://github.com/linyqh/NarratoAI) - Tự động hóa bình luận phim
-- [MoneyPrinterPlus](https://github.com/ddean2009/MoneyPrinterPlus) - Nền tảng sáng tạo video
-- [ComfyKit](https://github.com/puke3615/ComfyKit) - Thư viện gói ComfyUI workflow
+print(result.video_path)
+```
 
-## Phản hồi và hỗ trợ
+### Sử dụng API
 
-- 🐛 **Gặp vấn đề**: Gửi [Issue](https://github.com/AIDC-AI/Pixelle-Video/issues)
-- 💡 **Đề xuất tính năng**: Gửi [Feature Request](https://github.com/AIDC-AI/Pixelle-Video/issues)
-- ⭐ **Cho Star**: Nếu dự án hữu ích, hãy cho Star ủng hộ!
+```bash
+# Tạo video project
+curl -X POST http://localhost:8010/api/projects \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Video của tôi",
+    "topic": "Giới thiệu về AI",
+    "language": "vi"
+  }'
 
-## Giấy phép
+# Kiểm tra trạng thái
+curl http://localhost:8010/api/projects/{project_id}
 
-Dự án sử dụng giấy phép Apache 2.0, xem chi tiết trong [LICENSE](LICENSE).
+# Tạo TTS
+curl -X POST http://localhost:8010/api/tts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Xin chào thế giới",
+    "engine": "edge",
+    "voice": "vi-VN-HoaiMyNeural"
+  }'
+```
+
+---
+
+## 🔊 TTS Engines
+
+### Engines được hỗ trợ
+
+| Engine | Mô tả | Cấu hình |
+|--------|-------|----------|
+| **Edge TTS** | Microsoft Edge TTS (miễn phí) | Mặc định |
+| **Doubao** | ByteDance Doubao TTS | Cần API key |
+| **Azure** | Microsoft Azure TTS | Cần subscription |
+| **IndexTTS** | TTS cloning giọng nói | Cần model |
+
+### Cấu hình TTS
+
+```yaml
+# config.yaml
+tts:
+  engine: "edge"
+  
+  edge:
+    voice: "vi-VN-HoaiMyNeural"
+    rate: "+0%"
+    volume: "+0%"
+    
+  doubao:
+    app_id: "app_id_cua_ban"
+    access_token: "token_cua_ban"
+    
+  azure:
+    subscription_key: "key_cua_ban"
+    region: "eastus"
+    
+  index:
+    model_path: "/path/to/model"
+```
+
+### Liệt kê giọng nói
+
+```bash
+# Edge TTS
+python -m edge_tts --list-voices
+
+# API endpoint
+curl http://localhost:8010/api/tts/voices?engine=edge
+```
+
+---
+
+## 🐳 Triển khai Docker
+
+### Sử dụng Docker Compose
+
+```bash
+# Development
+docker-compose up -d
+
+# Production
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+### Build Image
+
+```bash
+docker build -t pixelle-video .
+docker run -p 8010:8010 -p 8011:8011 pixelle-video
+```
+
+### Push lên Docker Hub
+
+```bash
+# Set token
+export DOCKER_TOKEN=token_cua_ban
+
+# Build và push
+./scripts/docker-push.sh v1.0.0
+```
+
+---
+
+## 🔗 Tích hợp CreatorHub
+
+Pixelle-Video là một phần của [CreatorHub](https://github.com/tinnt-truman/CreatorHub).
+
+### Bật trong CreatorHub
+
+```bash
+# Bật video service
+curl -X POST http://localhost:8001/workspaces/default/projects/pixelle-video/enable
+```
+
+### Truy cập qua Traefik
+
+```
+https://ten-mien-cua-ban/video-api   # API
+https://ten-mien-cua-ban/video-ui    # Web UI
+```
+
+---
+
+## 🔧 Khắc phục sự cố
+
+### Lỗi kết nối ComfyUI
+
+```bash
+# Kiểm tra ComfyUI đang chạy
+curl http://localhost:8188/system_stats
+
+# Kiểm tra cấu hình
+grep -A5 "comfyui" config.yaml
+```
+
+### TTS không hoạt động
+
+```bash
+# Test Edge TTS
+python -c "import edge_tts; print('OK')"
+
+# Kiểm tra tên voice
+python -m edge_tts --list-voices | grep vi-VN
+```
+
+### Port đã được sử dụng
+
+```bash
+# Tìm process
+lsof -i :8010
+
+# Thay đổi port trong config.yaml
+server:
+  port: 8011
+```
+
+---
+
+## 📝 Giấy phép
+
+MIT
+
+---
+
+## 🔗 Liên kết
+
+- [GitHub](https://github.com/tinnt-truman/pixelle-video)
+- [CreatorHub](https://github.com/tinnt-truman/CreatorHub)
+- [Issues](https://github.com/tinnt-truman/pixelle-video/issues)
