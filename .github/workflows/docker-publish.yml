@@ -14,7 +14,7 @@ on:
         default: 'latest'
 
 env:
-  DOCKER_IMAGE: tinnt-truman/pixelle-video
+  DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/pixelle-video
 
 jobs:
   build-and-push:
